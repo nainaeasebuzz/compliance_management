@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Easebuzz</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <style>
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .login-image {
+            flex: 1;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-image img {
+            max-width: 80%;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .login-form-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        form {
+            width: 100%;
+            max-width: 350px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-image">
+            <img src="https://via.placeholder.com/400x400.png?text=Easebuzz+Image" alt="Easebuzz Illustration">
+        </div>
+        <div class="login-form-section">
+            <form method="post">
+                {% csrf_token %}
+                <h1>Login</h1>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required><br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required><br><br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html> 

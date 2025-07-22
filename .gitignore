@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.env
+.env
+*.env.*
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# VSCode and PyCharm
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Egg info
+*.egg-info/
+
+db.sqlite3
+
+# Static and media (if you use collectstatic)
+staticfiles/
+media/
+
+# Jupyter and Colab
+.ipynb_checkpoints/ 
