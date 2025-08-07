@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Compliance Management - Easebuzz</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #fff;
+            color: #222;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .top-bar {
+            background: #fff;
+            color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 30px;
+            border-bottom: 1px solid #eee;
+        }
+        .logo {
+            background: #e9ecef;
+            color: #222;
+            font-weight: bold;
+            padding: 8px 24px;
+            border-radius: 4px;
+            font-size: 1.2em;
+        }
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            background: #bbb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            position: relative;
+        }
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+        }
+        .user-dropdown.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .dropdown-item:hover {
+            background: #f8f8f8;
+        }
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+        .dropdown-item.logout:hover {
+            background: #ffebee;
+        }
+        .nav-bar {
+            background: #fff;
+            display: flex;
+            gap: 18px;
+            padding: 24px 40px 18px 40px;
+            border-bottom: 1px solid #eee;
+            justify-content: flex-start;
+        }
+        .nav-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px 28px;
+            min-width: 210px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            color: #222;
+            transition: background 0.2s, color 0.2s;
+            box-sizing: border-box;
+        }
+        .nav-btn.active {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .nav-btn:hover {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+            gap: 24px;
+        }
+        .big-btn {
+            background: #4169E1;
+            border: none;
+            border-radius: 6px;
+            padding: 24px 64px;
+            font-size: 1.2em;
+            font-weight: 500;
+            color: #fff;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .big-btn:hover {
+            background: #3b5bdb;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo">Easebuzz Logo</div>
+        <div class="user-icon" onclick="toggleUserDropdown()">&#128100;
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item">Admin User</div>
+                <div class="dropdown-item logout" onclick="logout()">Logout</div>
+            </div>
+        </div>
+    </div>
+    <div class="nav-bar">
+                    <button class="nav-btn" onclick="window.location.href='{% url 'dashboard_page' %}'">Dashboard</button>
+        <button class="nav-btn" onclick="window.location.href='{% url 'compliance_actions' %}'">Compliance Actions</button>
+        <button class="nav-btn active" onclick="window.location.href='{% url 'compliance_management' %}'">Compliance Management</button>
+        <button class="nav-btn" onclick="window.location.href='{% url 'create_user' %}'">User Management</button>
+    </div>
+    <div class="center-content">
+        <button class="big-btn" onclick="window.location.href='{% url 'compliance_creation' %}'">Create New Compliance</button>
+        <button class="big-btn" onclick="window.location.href='{% url 'compliance_edit_delete' %}'">Compliance Edit/Delete</button>
+    </div>
+    
+    <script>
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        function logout() {
+            // Redirect to login page
+            window.location.href = '{% url "login" %}';
+        }
+        
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userIcon = document.querySelector('.user-icon');
+            
+            if (!userIcon.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html> 

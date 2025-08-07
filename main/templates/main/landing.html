@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Easebuzz Landing</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #fff;
+            color: #222;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+        .top-bar {
+            background: #fff;
+            color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 30px;
+            border-bottom: 1px solid #eee;
+        }
+        .logo {
+            background: #e9ecef;
+            color: #222;
+            font-weight: bold;
+            padding: 8px 24px;
+            border-radius: 4px;
+            font-size: 1.2em;
+            border: none;
+        }
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            background: #bbb;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            position: relative;
+        }
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+        }
+        .user-dropdown.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .dropdown-item:hover {
+            background: #f8f8f8;
+        }
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+        .dropdown-item.logout:hover {
+            background: #ffebee;
+        }
+        .nav-bar {
+            background: #fff;
+            display: flex;
+            gap: 18px;
+            padding: 24px 40px 18px 40px;
+            border-bottom: 1px solid #eee;
+            justify-content: flex-start;
+        }
+        .nav-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px 28px;
+            min-width: 210px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            color: #222;
+            transition: background 0.2s, color 0.2s;
+            box-sizing: border-box;
+        }
+        .nav-btn.active {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .nav-btn:hover {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .main-content {
+            display: flex;
+            padding: 30px 40px;
+            gap: 32px;
+        }
+        .compliance-chart {
+            background: #fff;
+            border-radius: 8px;
+            flex: 2;
+            padding: 24px 24px 24px 24px;
+            min-width: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .compliance-status {
+            background: #fff;
+            border-radius: 8px;
+            flex: 1;
+            padding: 24px 18px;
+            min-width: 260px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: fit-content;
+        }
+        .chart-heading {
+            font-size: 1.35em;
+            font-weight: 700;
+        }
+        .status-title {
+            font-size: 1.25em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .status-btn {
+            background: #fff;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            padding: 14px 10px;
+            font-size: 1em;
+            margin-bottom: 8px;
+            text-align: left;
+            width: 100%;
+            cursor: pointer;
+            color: #222;
+        }
+        .status-btn:hover {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .status-btn:last-child {
+            margin-bottom: 0;
+        }
+        .chart-placeholder {
+            width: 100%;
+            height: 350px;
+            background: repeating-linear-gradient(90deg, #e9ecef, #e9ecef 10px, #fff 10px, #fff 40px);
+            border-radius: 6px;
+            margin-top: 18px;
+            position: relative;
+        }
+        .chart-labels {
+            display: flex;
+            gap: 18px;
+            margin-top: 12px;
+            font-size: 0.95em;
+        }
+        .chart-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.created { background: #f99; }
+        .dot.accepted { background: #99f; }
+        .dot.approved { background: #9f9; }
+        .filter-link {
+            color: #888;
+            font-size: 0.95em;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo">Easebuzz Logo</div>
+        <div class="user-icon" onclick="toggleUserDropdown()">&#128100;
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item">Admin User</div>
+                <div class="dropdown-item logout" onclick="logout()">Logout</div>
+            </div>
+        </div>
+    </div>
+    <div class="nav-bar">
+                    <button class="nav-btn active" onclick="window.location.href='{% url 'dashboard_page' %}'">Dashboard</button>
+        <button class="nav-btn" onclick="window.location.href='{% url 'compliance_actions' %}'">Compliance Actions</button>
+        <button class="nav-btn" onclick="window.location.href='{% url 'compliance_management' %}'">Compliance Management</button>
+        <button class="nav-btn" onclick="window.location.href='{% url 'create_user' %}'">User Management</button>
+    </div>
+    <div class="main-content">
+        <div class="compliance-chart">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="chart-heading">Department Wise Compliance</div>
+                <div class="filter-link">Apply Filters <svg width="16" height="16" viewBox="0 0 16 16" style="vertical-align:middle;" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3h12L9 9.5V13l-2 1V9.5L2 3z" fill="currentColor"/></svg></div>
+            </div>
+            <div class="chart-placeholder"></div>
+            <div class="chart-labels">
+                <div class="chart-label"><span class="dot created"></span>Created</div>
+                <div class="chart-label"><span class="dot accepted"></span>Accepted</div>
+                <div class="chart-label"><span class="dot approved"></span>Approved</div>
+            </div>
+        </div>
+        <div class="compliance-status">
+            <div class="status-title">
+                Compliance Status
+                <span class="filter-link">Filters <svg width="16" height="16" viewBox="0 0 16 16" style="vertical-align:middle;" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3h12L9 9.5V13l-2 1V9.5L2 3z" fill="currentColor"/></svg></span>
+            </div>
+            <button class="status-btn">765 Compliances Created</button>
+            <button class="status-btn">25 Pending Approval Requests</button>
+            <button class="status-btn">185 Compliances Accepted</button>
+            <button class="status-btn">5 Compliances Rejected</button>
+        </div>
+    </div>
+    
+    <script>
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        function logout() {
+            // Redirect to login page
+            window.location.href = '{% url "login" %}';
+        }
+        
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userIcon = document.querySelector('.user-icon');
+            
+            if (!userIcon.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html> 
