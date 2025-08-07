@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard - Easebuzz</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #333;
+            color: #222;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .page-container {
+            background: #fff;
+            border: 2px solid #0E1C42;
+            min-height: 100vh;
+            position: relative;
+        }
+        .top-bar {
+            background: #fff;
+            color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #495057;
+        }
+        .logo-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            border-radius: 3px;
+        }
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            background: #bbb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            position: relative;
+        }
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+        }
+        .user-dropdown.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .dropdown-item:hover {
+            background: #f8f8f8;
+        }
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+        .dropdown-item.logout:hover {
+            background: #ffebee;
+        }
+        .nav-bar {
+            background: #fff;
+            display: flex;
+            gap: 18px;
+            padding: 24px 40px 18px 40px;
+            border-bottom: 1px solid #eee;
+            justify-content: flex-start;
+        }
+        .nav-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px 28px;
+            min-width: 180px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            color: #495057;
+            transition: background 0.2s, color 0.2s;
+            box-sizing: border-box;
+        }
+        .nav-btn.active {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .nav-btn:hover {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .main-content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+        .chart-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: 200px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .bar-group {
+            display: flex;
+            gap: 4px;
+            align-items: end;
+        }
+        .bar {
+            width: 20px;
+            border-radius: 2px 2px 0 0;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .bar-tooltip {
+            position: absolute;
+            background: #333;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            white-space: nowrap;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            pointer-events: none;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .bar-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+        
+        .bar:hover .bar-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        .bar.pending {
+            background: #8b5cf6;
+        }
+        .bar.approved {
+            background: #059669;
+        }
+        .bar.total {
+            background: #f59e0b;
+        }
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: #666;
+            white-space: nowrap;
+        }
+        .y-axis {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.8em;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        .summary-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .summary-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .summary-card:hover {
+            transform: translateY(-2px);
+        }
+        .summary-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .summary-label {
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 500;
+        }
+        .card-approved {
+            border-left: 4px solid #4169E1;
+        }
+        .card-approved .summary-number {
+            color: #4169E1;
+        }
+        .card-rejected {
+            border-left: 4px solid #dc2626;
+        }
+        .card-rejected .summary-number {
+            color: #dc2626;
+        }
+        .card-pending {
+            border-left: 4px solid #8b5cf6;
+        }
+        .card-pending .summary-number {
+            color: #8b5cf6;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            background: #4169E1;
+            color: #fff;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        .close {
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .close:hover {
+            opacity: 0.7;
+        }
+        
+        .modal-body {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .compliance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .compliance-table th {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .compliance-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #dee2e6;
+            color: #333;
+        }
+        
+        .compliance-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .status-approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .status-pending {
+            background: #f3e8ff;
+            color: #8b5cf6;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="top-bar">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                Easebuzz
+            </div>
+            <div class="user-icon" onclick="toggleUserDropdown()">&#128100;
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-item">Admin User</div>
+                    <div class="dropdown-item logout" onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-bar">
+            <button class="nav-btn" onclick="window.location.href='{% url 'user_landing' %}'">Compliance Action</button>
+            <button class="nav-btn" onclick="window.location.href='{% url 'compliance_creation' %}'">Compliance Creation</button>
+            <button class="nav-btn active">Dashboard</button>
+        </div>
+        
+        <div class="main-content">
+            <div class="chart-section">
+                <h2 class="chart-title">Compliance Status</h2>
+                <div class="chart-container">
+                    <div class="y-axis">
+                        <span>12</span>
+                        <span>9</span>
+                        <span>6</span>
+                        <span>3</span>
+                        <span>0</span>
+                    </div>
+                    <div class="chart-bars">
+                        <div class="bar-group">
+                            <div class="bar pending" style="height: 40px;">
+                                <div class="bar-tooltip">Pending: 2</div>
+                            </div>
+                            <div class="bar approved" style="height: 120px;">
+                                <div class="bar-tooltip">Approved: 6</div>
+                            </div>
+                            <div class="bar total" style="height: 160px;">
+                                <div class="bar-tooltip">Total: 8</div>
+                            </div>
+                            <div class="bar-label">Q1</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar pending" style="height: 60px;">
+                                <div class="bar-tooltip">Pending: 3</div>
+                            </div>
+                            <div class="bar approved" style="height: 100px;">
+                                <div class="bar-tooltip">Approved: 5</div>
+                            </div>
+                            <div class="bar total" style="height: 160px;">
+                                <div class="bar-tooltip">Total: 8</div>
+                            </div>
+                            <div class="bar-label">Q2</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar pending" style="height: 80px;">
+                                <div class="bar-tooltip">Pending: 4</div>
+                            </div>
+                            <div class="bar approved" style="height: 90px;">
+                                <div class="bar-tooltip">Approved: 4.5</div>
+                            </div>
+                            <div class="bar total" style="height: 170px;">
+                                <div class="bar-tooltip">Total: 8.5</div>
+                            </div>
+                            <div class="bar-label">Q3</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar pending" style="height: 30px;">
+                                <div class="bar-tooltip">Pending: 1.5</div>
+                            </div>
+                            <div class="bar approved" style="height: 110px;">
+                                <div class="bar-tooltip">Approved: 5.5</div>
+                            </div>
+                            <div class="bar total" style="height: 140px;">
+                                <div class="bar-tooltip">Total: 7</div>
+                            </div>
+                            <div class="bar-label">Q4</div>
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #8b5cf6;"></div>
+                            <span>Pending</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #059669;"></div>
+                            <span>Approved</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #f59e0b;"></div>
+                            <span>Total Compliance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-section">
+                <div class="summary-card card-approved" onclick="showCompliances('approved')">
+                    <div class="summary-number">5</div>
+                    <div class="summary-label">Approved</div>
+                </div>
+                <div class="summary-card card-rejected" onclick="showCompliances('rejected')">
+                    <div class="summary-number">2</div>
+                    <div class="summary-label">Rejected</div>
+                </div>
+                <div class="summary-card card-pending" onclick="showCompliances('pending')">
+                    <div class="summary-number">12</div>
+                    <div class="summary-label">Pending</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Compliance List -->
+    <div id="complianceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Compliance List</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="complianceList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        function logout() {
+            window.location.href = '{% url "login" %}';
+        }
+        
+        function showCompliances(status) {
+            const modal = document.getElementById('complianceModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const complianceList = document.getElementById('complianceList');
+            
+            // Set modal title
+            modalTitle.textContent = `${status.charAt(0).toUpperCase() + status.slice(1)} Compliances`;
+            
+            // Generate mock compliance data based on status
+            const compliances = getCompliancesByStatus(status);
+            
+            // Create table HTML
+            let tableHTML = `
+                <table class="compliance-table">
+                    <thead>
+                        <tr>
+                            <th>Compliance ID</th>
+                            <th>Task</th>
+                            <th>Department</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            compliances.forEach(compliance => {
+                tableHTML += `
+                    <tr>
+                        <td>${compliance.id}</td>
+                        <td>${compliance.task}</td>
+                        <td>${compliance.department}</td>
+                        <td>${compliance.deadline}</td>
+                        <td><span class="status-badge status-${compliance.status}">${compliance.status}</span></td>
+                                                       <td>
+                                   <button style="background: #4169E1; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">View</button>
+                               </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            complianceList.innerHTML = tableHTML;
+            modal.style.display = 'block';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('complianceModal');
+            modal.style.display = 'none';
+        }
+        
+        function getCompliancesByStatus(status) {
+            // Mock data - in a real application, this would come from the backend
+            const mockData = {
+                approved: [
+                    { id: 'COMP001', task: 'Financial Report Q1', department: 'Finance', deadline: '2025-03-31', status: 'approved' },
+                    { id: 'COMP002', task: 'Regulatory Review', department: 'Legal', deadline: '2025-04-15', status: 'approved' },
+                    { id: 'COMP003', task: 'Security Audit', department: 'IT', deadline: '2025-04-30', status: 'approved' },
+                    { id: 'COMP004', task: 'Compliance Training', department: 'HR', deadline: '2025-05-10', status: 'approved' },
+                    { id: 'COMP005', task: 'Risk Assessment', department: 'Risk Management', deadline: '2025-05-20', status: 'approved' }
+                ],
+                rejected: [
+                    { id: 'COMP006', task: 'Data Privacy Review', department: 'Legal', deadline: '2025-03-20', status: 'rejected' },
+                    { id: 'COMP007', task: 'Internal Audit Report', department: 'Audit', deadline: '2025-04-05', status: 'rejected' }
+                ],
+                pending: [
+                    { id: 'COMP008', task: 'Quarterly Compliance Report', department: 'Compliance', deadline: '2025-06-30', status: 'pending' },
+                    { id: 'COMP009', task: 'Policy Update Review', department: 'Legal', deadline: '2025-07-15', status: 'pending' },
+                    { id: 'COMP010', task: 'Employee Training Completion', department: 'HR', deadline: '2025-07-30', status: 'pending' },
+                    { id: 'COMP011', task: 'System Security Update', department: 'IT', deadline: '2025-08-10', status: 'pending' },
+                    { id: 'COMP012', task: 'Annual Risk Assessment', department: 'Risk Management', deadline: '2025-08-25', status: 'pending' },
+                    { id: 'COMP013', task: 'Regulatory Filing', department: 'Finance', deadline: '2025-09-05', status: 'pending' },
+                    { id: 'COMP014', task: 'Compliance Monitoring Report', department: 'Compliance', deadline: '2025-09-20', status: 'pending' },
+                    { id: 'COMP015', task: 'Policy Implementation Review', department: 'Operations', deadline: '2025-10-05', status: 'pending' },
+                    { id: 'COMP016', task: 'Data Protection Assessment', department: 'IT', deadline: '2025-10-20', status: 'pending' },
+                    { id: 'COMP017', task: 'Training Program Evaluation', department: 'HR', deadline: '2025-11-05', status: 'pending' },
+                    { id: 'COMP018', task: 'Compliance Dashboard Update', department: 'Compliance', deadline: '2025-11-20', status: 'pending' },
+                    { id: 'COMP019', task: 'Regulatory Change Impact', department: 'Legal', deadline: '2025-12-05', status: 'pending' }
+                ]
+            };
+            
+            return mockData[status] || [];
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userIcon = document.querySelector('.user-icon');
+            const modal = document.getElementById('complianceModal');
+            
+            if (!userIcon.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+            
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html> 
