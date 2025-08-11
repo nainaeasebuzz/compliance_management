@@ -9,7 +9,10 @@ urlpatterns = [
     path('compliance-actions/', views.compliance_actions, name='compliance_actions'),
     path('compliance-management/', views.compliance_management, name='compliance_management'),
     path('compliance-creation/', views.compliance_creation, name='compliance_creation'),
+<<<<<<< HEAD
     path('admin-compliance-creation/', views.admin_compliance_creation, name='admin_compliance_creation'),
+=======
+>>>>>>> 76feacddb31ba2e99e6bb87737255db39260bd6b
     path('compliance-edit-delete/', views.compliance_edit_delete, name='compliance_edit_delete'),
     path('create-user/', views.create_user, name='create_user'),
     path('edit-credentials/', views.edit_credentials, name='edit_credentials'),
