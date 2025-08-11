@@ -398,6 +398,91 @@
             background: #fee2e2;
             color: #dc2626;
         }
+
+        /* Compliance Table Styles */
+        .compliance-table-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .compliance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .compliance-table th {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .compliance-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e9ecef;
+            color: #333;
+        }
+
+        .compliance-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-critical {
+            background: #fecaca;
+            color: #b91c1c;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-right: 4px;
+        }
+
+        .action-btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-btn-view {
+            background: #10b981;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -416,13 +501,14 @@
         </div>
         
         <div class="nav-bar">
-            <button class="nav-btn active">Dashboard</button>
-            <button class="nav-btn" onclick="window.location.href='{% url 'dashboard' %}'">User Management</button>
-            <button class="nav-btn" onclick="window.location.href='{% url 'compliance_management' %}'">Compliance Management</button>
-            <button class="nav-btn" onclick="window.location.href='{% url 'compliance_actions' %}'">Compliance Actions</button>
+            <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
+            <button class="nav-btn" onclick="showSection('user-management')">User Management</button>
+            <button class="nav-btn" onclick="showSection('compliance-management')">Compliance Management</button>
+            <button class="nav-btn" onclick="showSection('compliance-actions')">Compliance Actions</button>
         </div>
         
-        <div class="main-content">
+        <!-- Dashboard Section -->
+        <div class="main-content" id="dashboard-section">
             <div class="overview-section">
                 <div class="section-title">
                     Overview
@@ -462,6 +548,90 @@
                 </div>
                 <div class="departments-grid" id="departmentsGrid">
                     <!-- Department cards will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Section -->
+        <div class="main-content" id="user-management-section" style="display: none;">
+            <div class="overview-section">
+                <div class="section-title">
+                    User Management Compliances
+                    <button class="refresh-btn" onclick="refreshUserManagement()">🔄 Refresh</button>
+                </div>
+                <div class="compliance-table-container">
+                    <table class="compliance-table">
+                        <thead>
+                            <tr>
+                                <th>Compliance ID</th>
+                                <th>User Name</th>
+                                <th>Department</th>
+                                <th>Task</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userManagementTable">
+                            <!-- User management compliances will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance Management Section -->
+        <div class="main-content" id="compliance-management-section" style="display: none;">
+            <div class="overview-section">
+                <div class="section-title">
+                    Compliance Management
+                    <button class="refresh-btn" onclick="refreshComplianceManagement()">🔄 Refresh</button>
+                </div>
+                <div class="compliance-table-container">
+                    <table class="compliance-table">
+                        <thead>
+                            <tr>
+                                <th>Compliance ID</th>
+                                <th>Department</th>
+                                <th>Task</th>
+                                <th>Mandating Authority</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complianceManagementTable">
+                            <!-- Compliance management data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance Actions Section -->
+        <div class="main-content" id="compliance-actions-section" style="display: none;">
+            <div class="overview-section">
+                <div class="section-title">
+                    Compliance Actions
+                    <button class="refresh-btn" onclick="refreshComplianceActions()">🔄 Refresh</button>
+                </div>
+                <div class="compliance-table-container">
+                    <table class="compliance-table">
+                        <thead>
+                            <tr>
+                                <th>Action ID</th>
+                                <th>Compliance Type</th>
+                                <th>Department</th>
+                                <th>Action Required</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complianceActionsTable">
+                            <!-- Compliance actions will be populated by JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -704,6 +874,180 @@
                 document.getElementById('pendingCompliances').textContent = newData.summary.pending;
                 document.getElementById('approvedCompliances').textContent = newData.summary.approved;
             }
+        }
+
+        // Mock data for different sections
+        let userManagementData = [
+            { id: 'UM001', userName: 'John Doe', department: 'Finance', task: 'Financial Report Review', status: 'approved', date: '2025-08-08' },
+            { id: 'UM002', userName: 'Jane Smith', department: 'HR', task: 'Employee Training Compliance', status: 'pending', date: '2025-08-07' },
+            { id: 'UM003', userName: 'Mike Johnson', department: 'IT', task: 'Security Policy Update', status: 'approved', date: '2025-08-06' },
+            { id: 'UM004', userName: 'Sarah Wilson', department: 'Legal', task: 'Regulatory Compliance Check', status: 'rejected', date: '2025-08-05' },
+            { id: 'UM005', userName: 'David Brown', department: 'Operations', task: 'Process Documentation', status: 'pending', date: '2025-08-04' }
+        ];
+
+        let complianceManagementData = [
+            { id: 'CM001', department: 'Finance', task: 'Quarterly Financial Report', mandatingAuthority: 'SEC', status: 'approved', dueDate: '2025-08-15' },
+            { id: 'CM002', department: 'Legal', task: 'Regulatory Compliance Review', mandatingAuthority: 'FTC', status: 'pending', dueDate: '2025-08-20' },
+            { id: 'CM003', department: 'IT', task: 'Data Security Audit', mandatingAuthority: 'ISO', status: 'approved', dueDate: '2025-08-10' },
+            { id: 'CM004', department: 'HR', task: 'Employee Handbook Update', mandatingAuthority: 'DOL', status: 'rejected', dueDate: '2025-08-25' },
+            { id: 'CM005', department: 'Operations', task: 'Quality Management System', mandatingAuthority: 'FDA', status: 'pending', dueDate: '2025-08-30' }
+        ];
+
+        let complianceActionsData = [
+            { id: 'CA001', complianceType: 'Financial', department: 'Finance', actionRequired: 'Submit Q2 Report', priority: 'High', status: 'pending' },
+            { id: 'CA002', complianceType: 'Legal', department: 'Legal', actionRequired: 'Review New Regulations', priority: 'Critical', status: 'pending' },
+            { id: 'CA003', complianceType: 'Security', department: 'IT', actionRequired: 'Update Security Protocols', priority: 'High', status: 'approved' },
+            { id: 'CA004', complianceType: 'HR', department: 'HR', actionRequired: 'Conduct Training Session', priority: 'Medium', status: 'pending' },
+            { id: 'CA005', complianceType: 'Quality', department: 'Operations', actionRequired: 'Audit Process Compliance', priority: 'Low', status: 'rejected' }
+        ];
+
+        // Section switching function
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('user-management-section').style.display = 'none';
+            document.getElementById('compliance-management-section').style.display = 'none';
+            document.getElementById('compliance-actions-section').style.display = 'none';
+
+            // Show selected section
+            document.getElementById(sectionName + '-section').style.display = 'block';
+
+            // Update navigation button states
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Load data for the selected section
+            switch(sectionName) {
+                case 'dashboard':
+                    loadDepartments();
+                    loadRecentActivities();
+                    break;
+                case 'user-management':
+                    loadUserManagementData();
+                    break;
+                case 'compliance-management':
+                    loadComplianceManagementData();
+                    break;
+                case 'compliance-actions':
+                    loadComplianceActionsData();
+                    break;
+            }
+        }
+
+        // Load user management data
+        function loadUserManagementData() {
+            const tableBody = document.getElementById('userManagementTable');
+            tableBody.innerHTML = '';
+
+            userManagementData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.userName}</td>
+                    <td>${item.department}</td>
+                    <td>${item.task}</td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>${item.date}</td>
+                    <td>
+                        <button class="action-btn action-btn-edit" onclick="editItem('${item.id}')">Edit</button>
+                        <button class="action-btn action-btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load compliance management data
+        function loadComplianceManagementData() {
+            const tableBody = document.getElementById('complianceManagementTable');
+            tableBody.innerHTML = '';
+
+            complianceManagementData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.department}</td>
+                    <td>${item.task}</td>
+                    <td>${item.mandatingAuthority}</td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>${item.dueDate}</td>
+                    <td>
+                        <button class="action-btn action-btn-view" onclick="viewItem('${item.id}')">View</button>
+                        <button class="action-btn action-btn-edit" onclick="editItem('${item.id}')">Edit</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load compliance actions data
+        function loadComplianceActionsData() {
+            const tableBody = document.getElementById('complianceActionsTable');
+            tableBody.innerHTML = '';
+
+            complianceActionsData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.complianceType}</td>
+                    <td>${item.department}</td>
+                    <td>${item.actionRequired}</td>
+                    <td><span class="status-badge status-${item.priority.toLowerCase()}">${item.priority}</span></td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>
+                        <button class="action-btn action-btn-view" onclick="viewItem('${item.id}')">View</button>
+                        <button class="action-btn action-btn-edit" onclick="editItem('${item.id}')">Edit</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Refresh functions for each section
+        function refreshUserManagement() {
+            console.log('Refreshing user management data...');
+            loadUserManagementData();
+            showRefreshFeedback('refreshUserManagement');
+        }
+
+        function refreshComplianceManagement() {
+            console.log('Refreshing compliance management data...');
+            loadComplianceManagementData();
+            showRefreshFeedback('refreshComplianceManagement');
+        }
+
+        function refreshComplianceActions() {
+            console.log('Refreshing compliance actions data...');
+            loadComplianceActionsData();
+            showRefreshFeedback('refreshComplianceActions');
+        }
+
+        function showRefreshFeedback(functionName) {
+            const refreshBtn = document.querySelector(`[onclick="${functionName}()"]`);
+            const originalText = refreshBtn.textContent;
+            refreshBtn.textContent = '✅ Updated';
+            setTimeout(() => {
+                refreshBtn.textContent = originalText;
+            }, 2000);
+        }
+
+        // Action functions
+        function editItem(id) {
+            console.log('Editing item:', id);
+            alert('Edit functionality for item: ' + id);
+        }
+
+        function deleteItem(id) {
+            console.log('Deleting item:', id);
+            if (confirm('Are you sure you want to delete this item?')) {
+                alert('Delete functionality for item: ' + id);
+            }
+        }
+
+        function viewItem(id) {
+            console.log('Viewing item:', id);
+            alert('View functionality for item: ' + id);
         }
     </script>
 </body>

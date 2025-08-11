@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Compliance Creation - Easebuzz</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f5f5;
+            color: #222;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .page-container {
+            background: #fff;
+            min-height: 100vh;
+            position: relative;
+        }
+        .top-bar {
+            background: #fff;
+            color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #495057;
+        }
+        .logo-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            border-radius: 3px;
+        }
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            background: #bbb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            position: relative;
+        }
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+        }
+        .user-dropdown.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .dropdown-item:hover {
+            background: #f8f8f8;
+        }
+        .dropdown-item.logout {
+            color: #d32f2f;
+        }
+        .dropdown-item.logout:hover {
+            background: #ffebee;
+        }
+        .nav-bar {
+            background: #fff;
+            display: flex;
+            gap: 18px;
+            padding: 24px 40px 18px 40px;
+            border-bottom: 1px solid #eee;
+            justify-content: flex-start;
+        }
+        .nav-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px 28px;
+            min-width: 180px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            color: #495057;
+            transition: background 0.2s, color 0.2s;
+            box-sizing: border-box;
+        }
+        .nav-btn.active {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .nav-btn:hover {
+            background: #0E1C42;
+            color: #fff;
+            border: 1px solid #0E1C42;
+        }
+        .form-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 32px 32px 24px 32px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 32px;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .form-row {
+            display: flex;
+            gap: 24px;
+        }
+        .form-row > .form-group {
+            flex: 1;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 0;
+        }
+        label {
+            font-size: 0.95em;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #495057;
+        }
+        input[type="text"] {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 1em;
+            font-family: inherit;
+            color: #333;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #0E1C42;
+            background: #fff;
+        }
+        
+        select {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 1em;
+            font-family: inherit;
+            color: #333;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #0E1C42;
+            background: #fff;
+        }
+        .submit-btn {
+            background: #4169E1;
+            border: 1px solid #4169E1;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 500;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 24px;
+            align-self: flex-end;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .submit-btn:hover {
+            background: #3b5bdb;
+            border-color: #3b5bdb;
+        }
+        .submit-btn .btn-text {
+            font-size: 0.9em;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        
+        <div class="top-bar">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                Easebuzz
+            </div>
+            <div class="user-icon" onclick="toggleUserDropdown()">&#128100;
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-item">Admin User</div>
+                    <div class="dropdown-item logout" onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-bar">
+                    <button class="nav-btn" onclick="window.location.href='{% url 'dashboard_page' %}'">Dashboard</button>
+        <button class="nav-btn" onclick="window.location.href='{% url 'compliance_actions' %}'">Compliance Actions</button>
+        <button class="nav-btn active" onclick="window.location.href='{% url 'compliance_management' %}'">Compliance Management</button>
+        <button class="nav-btn" onclick="window.location.href='{% url 'create_user' %}'">User Management</button>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-title">Admin Compliance Creation</div>
+            <form>
+                <div class="form-group">
+                    <label for="user_id">User ID</label>
+                    <input type="text" id="user_id" name="user_id">
+                </div>
+                
+                <div class="form-group">
+                    <label for="user_name">User Name</label>
+                    <input type="text" id="user_name" name="user_name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" name="department">
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px 16px; font-size: 1em; font-family: inherit; color: #333; width: 100%;">
+                        <option value="">Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task">Task</label>
+                    <input type="text" id="task" name="task">
+                </div>
+                
+                <div class="form-group">
+                    <label for="mandating_authority">Mandating Authority</label>
+                    <input type="text" id="mandating_authority" name="mandating_authority">
+                </div>
+                
+                <div class="form-group">
+                    <label for="source">Source</label>
+                    <input type="text" id="source" name="source">
+                </div>
+                
+                <div class="form-group">
+                    <label for="para_source">Para in the Source</label>
+                    <input type="text" id="para_source" name="para_source">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nature_task">Nature of Task</label>
+                        <input type="text" id="nature_task" name="nature_task">
+                    </div>
+                    <div class="form-group">
+                        <label for="theme_task">Theme of Task</label>
+                        <input type="text" id="theme_task" name="theme_task">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="primary_department">Primary Department</label>
+                        <input type="text" id="primary_department" name="primary_department">
+                    </div>
+                    <div class="form-group">
+                        <label for="primary_ownership">Primary Ownership (Individual)</label>
+                        <input type="text" id="primary_ownership" name="primary_ownership">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="secondary_owner">Secondary Owner</label>
+                        <input type="text" id="secondary_owner" name="secondary_owner">
+                    </div>
+                    <div class="form-group">
+                        <label for="secondary_department">Secondary Department</label>
+                        <input type="text" id="secondary_department" name="secondary_department">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="board_approval">Board Approval/Involvement</label>
+                        <input type="text" id="board_approval" name="board_approval">
+                    </div>
+                    <div class="form-group">
+                        <label for="committee_approval">Committee Approval</label>
+                        <input type="text" id="committee_approval" name="committee_approval">
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <div class="btn-text">Create</div>
+                    <div class="btn-text">Compliance</div>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        function logout() {
+            // Redirect to login page
+            window.location.href = '{% url "login" %}';
+        }
+        
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userIcon = document.querySelector('.user-icon');
+            
+            if (!userIcon.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html> 

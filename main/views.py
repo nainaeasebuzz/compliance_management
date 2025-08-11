@@ -33,6 +33,9 @@ def compliance_management(request):
 def compliance_creation(request):
     return render(request, 'main/compliance_creation.html')
 
+def admin_compliance_creation(request):
+    return render(request, 'main/admin_compliance_creation.html')
+
 def compliance_edit_delete(request):
     return render(request, 'main/compliance_edit_delete.html')
 
@@ -95,4 +98,4 @@ def user_dashboard(request):
     return render(request, 'main/user_dashboard.html')
 
 def admin_dashboard(request):
-    return render(request, 'main/admin_dashboard.html')
+    return render(request, 'main/admin_dashboard_new.html')
