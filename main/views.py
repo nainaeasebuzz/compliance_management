@@ -33,12 +33,10 @@ def compliance_management(request):
 def compliance_creation(request):
     return render(request, 'main/compliance_creation.html')
 
-<<<<<<< HEAD
+
 def admin_compliance_creation(request):
     return render(request, 'main/admin_compliance_creation.html')
 
-=======
->>>>>>> 76feacddb31ba2e99e6bb87737255db39260bd6b
 def compliance_edit_delete(request):
     return render(request, 'main/compliance_edit_delete.html')
 
